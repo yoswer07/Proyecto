@@ -1,6 +1,7 @@
 {
   "name": "Proyecto",
   "packageManager": "yarn@4.18.1",
+  "private": true,
   "workspaces": [
     "invitaciones"
   ]
