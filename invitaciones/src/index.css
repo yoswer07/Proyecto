@@ -1,0 +1,31 @@
+:root {
+  --navy: #25384f;
+  --navy-soft: #667486;
+  --rose: #a76475;
+  --paper: #f6f5f1;
+  --line: #dedfdd;
+  --body: #4b5662;
+  --serif: 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  --sans: 'Trebuchet MS', 'Segoe UI', sans-serif;
+
+  background: #fff;
+  color: var(--body);
+  font-family: var(--sans);
+  font-size: 16px;
+  font-synthesis: none;
+  font-weight: 400;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+#root {
+  min-height: 100vh;
+}

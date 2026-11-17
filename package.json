@@ -1,0 +1,7 @@
+{
+  "name": "Proyecto",
+  "packageManager": "yarn@4.18.1",
+  "workspaces": [
+    "invitaciones"
+  ]
+}
