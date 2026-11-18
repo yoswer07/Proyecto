@@ -212,7 +212,16 @@ Deno.serve(async (request) => {
   }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
-  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  let serviceRoleKey = null
+  const secretKeysValue = Deno.env.get('SUPABASE_SECRET_KEYS')
+  if (secretKeysValue) {
+    try {
+      serviceRoleKey = JSON.parse(secretKeysValue).default ?? null
+    } catch {
+      return jsonResponse({ error: 'La clave de acceso de Supabase no está configurada correctamente.' }, 503, origin)
+    }
+  }
+  serviceRoleKey ??= Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
   if (!supabaseUrl || !serviceRoleKey) {
     return jsonResponse({ error: 'La función no está configurada en Supabase.' }, 503, origin)
   }
