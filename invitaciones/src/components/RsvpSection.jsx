@@ -74,16 +74,15 @@ function RsvpSection() {
         },
       })
 
-      if (error || !data?.qrToken) {
+      if (error || !data?.photoUploadUrl) {
         setFeedback('No se pudo guardar la confirmación. Inténtalo más tarde.')
         return
       }
 
-      const qrUrl = new URL(window.location.href)
-      qrUrl.searchParams.set('invite', data.qrToken)
-      qrUrl.hash = 'fotos'
-      setTicket({ guestName: data.guestName, qrUrl: qrUrl.toString() })
-      setFeedback('Confirmación guardada. El QR solo se muestra en esta sesión.')
+      setTicket({ guestName: data.guestName, photoUploadUrl: data.photoUploadUrl })
+      setFeedback(data.organizerCopySent === false
+        ? 'Confirmación guardada y correo enviado; no se pudo enviar la copia al organizador.'
+        : 'Confirmación guardada. El QR compartido también fue enviado por correo.')
     } catch {
       setFeedback('No se pudo conectar con Supabase. Revisa tu conexión e inténtalo de nuevo.')
     } finally {
@@ -227,10 +226,13 @@ function RsvpSection() {
 
         {ticket && (
           <div className="rsvp-ticket" aria-live="polite">
-            <p className="eyebrow">Entrada personal</p>
+            <p className="eyebrow">Acceso compartido para fotos</p>
             <h3>{ticket.guestName}</h3>
-            <QRCodeSVG value={ticket.qrUrl} size={208} level="M" includeMargin />
-            <p>Guarda este QR. Se perderá al cerrar o recargar esta página.</p>
+            <QRCodeSVG value={ticket.photoUploadUrl} size={208} level="M" includeMargin />
+            <p>Este QR y enlace son iguales para todas las personas invitadas.</p>
+            <a className="rsvp-upload-link" href={ticket.photoUploadUrl} rel="noreferrer" target="_blank">
+              Abrir formulario para subir fotos ↗
+            </a>
           </div>
         )}
       </div>

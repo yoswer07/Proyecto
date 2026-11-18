@@ -651,28 +651,15 @@ h3 {
   font-size: 13px;
 }
 
-.qr-preview {
-  align-items: center;
-  border: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 30px;
-  min-height: 120px;
-  max-width: 320px;
-  padding: 20px;
-}
-
-.qr-preview span {
+.rsvp-upload-link {
   color: var(--navy);
-  font-family: var(--serif);
-  font-size: 21px;
+  font-size: 13px;
+  font-weight: 600;
+  text-underline-offset: 3px;
 }
 
-.qr-preview small {
-  color: var(--navy-soft);
-  font-size: 12px;
+.rsvp-upload-link:hover {
+  color: var(--rose);
 }
 
 .site-footer {
