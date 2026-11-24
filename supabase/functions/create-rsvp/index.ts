@@ -73,20 +73,22 @@ function buildQrImageUrl(photoUploadUrl) {
 async function sendEmailJsTemplate({ templateId, templateParams }) {
   const serviceId = Deno.env.get('EMAILJS_SERVICE_ID')
   const publicKey = Deno.env.get('EMAILJS_PUBLIC_KEY')
-  const privateKey = Deno.env.get('EMAILJS_PRIVATE_KEY')
+  const allowedOrigin = Deno.env.get('ALLOWED_ORIGINS')?.split(',')[0]?.trim()
 
-  if (!serviceId || !publicKey || !privateKey || !templateId) {
+  if (!serviceId || !publicKey || !templateId) {
     throw new Error('EmailJS no está configurado')
   }
 
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  if (allowedOrigin) headers.set('Origin', allowedOrigin)
+
   const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({
       service_id: serviceId,
       template_id: templateId,
       user_id: publicKey,
-      accessToken: privateKey,
       template_params: templateParams,
     }),
   })
@@ -228,14 +230,12 @@ Deno.serve(async (request) => {
 
   const emailJsServiceId = Deno.env.get('EMAILJS_SERVICE_ID')
   const emailJsPublicKey = Deno.env.get('EMAILJS_PUBLIC_KEY')
-  const emailJsPrivateKey = Deno.env.get('EMAILJS_PRIVATE_KEY')
   const emailJsGuestTemplateId = Deno.env.get('EMAILJS_GUEST_TEMPLATE_ID')
   const organizerEmail = Deno.env.get('ORGANIZER_EMAIL')
   const photoUploadUrl = getPhotoUploadUrl()
   const providerConfigReady = Boolean(
     emailJsServiceId &&
       emailJsPublicKey &&
-      emailJsPrivateKey &&
       emailJsGuestTemplateId &&
       organizerEmail &&
       photoUploadUrl,

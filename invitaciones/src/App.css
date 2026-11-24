@@ -89,11 +89,50 @@ main {
   min-height: min(720px, 84svh);
 }
 
+.hero-section--intro {
+  align-content: center;
+  box-sizing: border-box;
+  min-height: 100svh;
+  padding-bottom: 96px;
+  padding-top: 64px;
+}
+
 .hero-content {
   margin: 0 auto;
   max-width: 700px;
   padding: 26px 0;
+  position: relative;
   width: 100%;
+  z-index: 1;
+}
+
+.hero-bouquet {
+  aspect-ratio: 313 / 500;
+  left: 0;
+  mix-blend-mode: multiply;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(150px, 22vw, 280px);
+  z-index: 0;
+}
+
+.hero-bouquet img {
+  display: block;
+  height: 100%;
+  max-width: none;
+  width: auto;
+}
+
+.hero-bouquet--right {
+  left: auto;
+  right: 0;
+}
+
+.hero-bouquet--right img {
+  transform: translateX(-50%);
 }
 
 .envelope {
@@ -102,18 +141,28 @@ main {
   box-shadow: 0 28px 60px rgba(37, 56, 79, 0.15);
   isolation: isolate;
   overflow: hidden;
+  perspective: 1000px;
   position: relative;
+  transform-style: preserve-3d;
   width: 100%;
 }
 
 .envelope-flap {
+  backface-visibility: hidden;
   background: #c4d0d8;
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   inset: 0 0 auto;
   height: 48%;
   pointer-events: none;
   position: absolute;
+  transform-origin: top center;
+  transition: transform 760ms cubic-bezier(0.2, 0.72, 0.24, 1), z-index 0s 380ms;
   z-index: 3;
+}
+
+.envelope--opening .envelope-flap {
+  transform: rotateX(-175deg);
+  z-index: 1;
 }
 
 .envelope-paper {
@@ -122,12 +171,19 @@ main {
   border: 1px solid rgba(37, 56, 79, 0.12);
   display: flex;
   flex-direction: column;
-  inset: 50% 12% 9%;
+  inset: 34% 12% 8%;
   justify-content: center;
-  padding: 26px 18px 42px;
+  overflow: hidden;
+  padding: 26px 18px 23px;
   position: absolute;
   text-align: center;
-  z-index: 1;
+  transform: translateY(120%);
+  transition: transform 1.15s cubic-bezier(0.18, 0.8, 0.22, 1) 180ms;
+  z-index: 2;
+}
+
+.envelope--opening .envelope-paper {
+  transform: translateY(-8%);
 }
 
 .envelope-paper::before {
@@ -152,9 +208,16 @@ main {
   line-height: 1.1;
   margin: 0;
   max-width: 100%;
+  min-width: 0;
   overflow-wrap: anywhere;
   position: relative;
   z-index: 1;
+}
+
+.couple-names > span {
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .names-joining {
@@ -201,6 +264,7 @@ main {
 
 .envelope-seal {
   align-items: center;
+  appearance: none;
   background: var(--rose);
   border: 3px solid #fff3f1;
   border-radius: 50%;
@@ -210,11 +274,28 @@ main {
   height: 38px;
   justify-content: center;
   left: 50%;
+  padding: 0;
   position: absolute;
   top: 48%;
   transform: translate(-50%, -50%);
+  transition: opacity 240ms ease, transform 300ms ease;
   width: 38px;
   z-index: 4;
+}
+
+.envelope-seal:not(:disabled) {
+  cursor: pointer;
+}
+
+.envelope-seal:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.envelope--opening .envelope-seal {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.55);
 }
 
 .envelope-seal::after {
@@ -280,6 +361,38 @@ h3 {
   justify-content: center;
   margin: 24px auto 0;
   width: fit-content;
+}
+
+.hero-open-button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 8px 12px;
+}
+
+.hero-open-button:disabled {
+  cursor: default;
+}
+
+.invitation-content-reveal {
+  animation: invitation-content-reveal 700ms ease both;
+}
+
+@keyframes invitation-content-reveal {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .envelope-flap,
+  .envelope-paper,
+  .envelope-seal,
+  .invitation-content-reveal {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
 }
 
 .section-copy {
@@ -674,6 +787,46 @@ h3 {
   padding: 28px 40px;
 }
 
+.music-control {
+  align-items: center;
+  background: rgba(246, 245, 241, 0.94);
+  border: 1px solid rgba(37, 56, 79, 0.28);
+  border-radius: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  box-shadow: 0 3px 12px rgba(37, 56, 79, 0.14);
+  color: var(--navy);
+  cursor: pointer;
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  padding: 0;
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right));
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  width: 44px;
+  z-index: 20;
+}
+
+.music-control:hover {
+  background: #fff;
+  color: var(--rose);
+  transform: translateY(-2px);
+}
+
+.music-control:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
+.music-control__icon {
+  font-size: 21px;
+  line-height: 1;
+}
+
+.music-control__icon--pause {
+  font-size: 18px;
+}
+
 @media (max-width: 700px) {
   .site-header {
     align-items: flex-start;
@@ -749,13 +902,23 @@ h3 {
     padding-bottom: 72px;
   }
 
+  .hero-section.hero-section--intro {
+    min-height: 100svh;
+    padding: 64px 24px 88px;
+  }
+
   .hero-content {
     padding: 12px 0;
+    width: calc(100% - 80px);
+  }
+
+  .hero-bouquet {
+    width: clamp(90px, 28vw, 170px);
   }
 
   .envelope-paper {
-    inset: 50% 7% 9%;
-    padding: 14px 10px 20px;
+    inset: 34% 7% 8%;
+    padding: 8px 8px 12px;
   }
 
   .envelope-paper::before {
@@ -763,7 +926,9 @@ h3 {
   }
 
   .couple-names {
-    font-size: clamp(19px, 5vw, 27px);
+    font-size: clamp(16px, 4.8vw, 22px);
+    gap: 0.12em;
+    line-height: 1.04;
   }
 
   .envelope-paper .eyebrow {

@@ -1,6 +1,6 @@
-function Envelope({ groom, bride, date }) {
+function Envelope({ groom, bride, date, isOpening, onOpen }) {
   return (
-    <div className="envelope">
+    <div className={`envelope${isOpening ? ' envelope--opening' : ''}`}>
       <div className="envelope-paper">
         <h1 className="couple-names">
           <span>{groom}</span>
@@ -11,7 +11,13 @@ function Envelope({ groom, bride, date }) {
         <p className="hero-date">{date}</p>
       </div>
       <div className="envelope-flap" aria-hidden="true" />
-      <span className="envelope-seal" aria-hidden="true" />
+      <button
+        aria-label="Abrir la invitación desde el sello"
+        className="envelope-seal"
+        disabled={isOpening}
+        onClick={onOpen}
+        type="button"
+      />
     </div>
   )
 }
