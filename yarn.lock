@@ -278,6 +278,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource/dancing-script@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@fontsource/dancing-script@npm:5.3.0"
+  checksum: 10c0/20a038031e0e19d84946ce7e9eddb7dd4bfdd8602f666bf441d87648f206f7d5416b70c6e089ae22e75fbb48822cde51891d63b191a61e21e9b473a3c0239e83
+  languageName: node
+  linkType: hard
+
 "@humanfs/core@npm:^0.19.2":
   version: 0.19.2
   resolution: "@humanfs/core@npm:0.19.2"
@@ -1160,6 +1167,7 @@ __metadata:
   resolution: "invitaciones@workspace:invitaciones"
   dependencies:
     "@eslint/js": "npm:^10.0.1"
+    "@fontsource/dancing-script": "npm:^5.3.0"
     "@supabase/supabase-js": "npm:^2.119.0"
     "@types/react": "npm:^19.3.0"
     "@types/react-dom": "npm:^19.3.0"

@@ -1,9 +1,11 @@
 import Envelope from './Envelope.jsx'
 import bouquets from '../assets/ramos.jfif'
 
-function HeroCover({ groom, bride, date, isOpening, isOpened, onOpen }) {
+function HeroCover({ groom, bride, date, isOpening, isOpened, isNameFontReady, onOpen }) {
+  const isOpenDisabled = isOpening || !isNameFontReady
+
   return (
-    <section className={`page-section hero-section${!isOpened ? ' hero-section--intro' : ''}`} id="portada">
+    <section className="page-section hero-section hero-section--cover" id="portada">
       <div className="hero-bouquet hero-bouquet--left" aria-hidden="true">
         <img src={bouquets} alt="" />
       </div>
@@ -12,11 +14,19 @@ function HeroCover({ groom, bride, date, isOpening, isOpened, onOpen }) {
       </div>
       <div className="hero-content">
         <p className="eyebrow hero-eyebrow">Con alegría te invitamos</p>
-        <Envelope groom={groom} bride={bride} date={date} isOpening={isOpening || isOpened} onOpen={onOpen} />
+        <Envelope
+          groom={groom}
+          bride={bride}
+          date={date}
+          isFontReady={isNameFontReady}
+          isOpening={isOpening || isOpened}
+          isOpenDisabled={isOpenDisabled}
+          onOpen={onOpen}
+        />
         {!isOpened && (
-          <button className="text-link hero-link hero-open-button" disabled={isOpening} onClick={onOpen} type="button">
-            {isOpening ? 'Abriendo la invitación…' : 'Abrir invitación'}
-            {!isOpening && <span aria-hidden="true">↓</span>}
+          <button className="text-link hero-link hero-open-button" disabled={isOpenDisabled} onClick={onOpen} type="button">
+            {isOpening ? 'Abriendo la invitación…' : !isNameFontReady ? 'Preparando invitación…' : 'Abrir invitación'}
+            {!isOpening && isNameFontReady && <span aria-hidden="true">↓</span>}
           </button>
         )}
       </div>

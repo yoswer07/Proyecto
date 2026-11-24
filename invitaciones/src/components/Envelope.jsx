@@ -1,8 +1,8 @@
-function Envelope({ groom, bride, date, isOpening, onOpen }) {
+function Envelope({ groom, bride, date, isFontReady, isOpening, isOpenDisabled, onOpen }) {
   return (
     <div className={`envelope${isOpening ? ' envelope--opening' : ''}`}>
       <div className="envelope-paper">
-        <h1 className="couple-names">
+        <h1 className={`couple-names${isFontReady ? '' : ' couple-names--font-loading'}`}>
           <span>{groom}</span>
           <span className="names-joining" aria-hidden="true">&amp;</span>
           <span>{bride}</span>
@@ -14,7 +14,7 @@ function Envelope({ groom, bride, date, isOpening, onOpen }) {
       <button
         aria-label="Abrir la invitación desde el sello"
         className="envelope-seal"
-        disabled={isOpening}
+        disabled={isOpenDisabled}
         onClick={onOpen}
         type="button"
       />

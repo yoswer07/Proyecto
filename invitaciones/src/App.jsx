@@ -28,6 +28,26 @@ function App() {
   const [isOpening, setIsOpening] = useState(false)
   const [isInvitationOpen, setIsInvitationOpen] = useState(false)
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
+  const [isNameFontReady, setIsNameFontReady] = useState(
+    () => typeof document === 'undefined' || !document.fonts?.load,
+  )
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (!document.fonts?.load) return undefined
+
+    document.fonts
+      .load('400 22px "Dancing Script"', `${weddingDetails.groom} ${weddingDetails.bride}`)
+      .catch(() => [])
+      .then(() => {
+        if (isMounted) setIsNameFontReady(true)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   useEffect(() => {
     if (!isOpening) return undefined
@@ -101,6 +121,7 @@ function App() {
           date={weddingDetails.date}
           isOpening={isOpening}
           isOpened={isInvitationOpen}
+          isNameFontReady={isNameFontReady}
           onOpen={openInvitation}
         />
 

@@ -89,7 +89,7 @@ main {
   min-height: min(720px, 84svh);
 }
 
-.hero-section--intro {
+.hero-section--cover {
   align-content: center;
   box-sizing: border-box;
   min-height: 100svh;
@@ -199,7 +199,7 @@ main {
   color: var(--navy);
   display: flex;
   flex-wrap: wrap;
-  font-family: 'Segoe Script', 'Brush Script MT', cursive;
+  font-family: 'Dancing Script', cursive;
   font-size: clamp(24px, 4vw, 42px);
   font-weight: 400;
   gap: 0.22em;
@@ -218,6 +218,10 @@ main {
   max-width: 100%;
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.couple-names--font-loading {
+  visibility: hidden;
 }
 
 .names-joining {
@@ -377,7 +381,31 @@ h3 {
 }
 
 .invitation-content-reveal {
-  animation: invitation-content-reveal 700ms ease both;
+  display: contents;
+}
+
+.invitation-content-reveal > * {
+  animation: invitation-content-reveal 800ms ease both;
+}
+
+.invitation-content-reveal > :nth-child(2) {
+  animation-delay: 180ms;
+}
+
+.invitation-content-reveal > :nth-child(3) {
+  animation-delay: 420ms;
+}
+
+.invitation-content-reveal > :nth-child(4) {
+  animation-delay: 660ms;
+}
+
+.invitation-content-reveal > :nth-child(5) {
+  animation-delay: 900ms;
+}
+
+.invitation-content-reveal > :nth-child(6) {
+  animation-delay: 1140ms;
 }
 
 @keyframes invitation-content-reveal {
@@ -392,6 +420,11 @@ h3 {
   .invitation-content-reveal {
     animation-duration: 1ms !important;
     transition-duration: 1ms !important;
+  }
+
+  .invitation-content-reveal > * {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
   }
 }
 
@@ -536,8 +569,11 @@ h3 {
 }
 
 .venue-content {
+  box-sizing: border-box;
   margin: 0 auto;
   max-width: 1120px;
+  min-width: 0;
+  width: 100%;
 }
 
 .venue-heading {
@@ -546,6 +582,12 @@ h3 {
   gap: 32px;
   justify-content: space-between;
   margin-bottom: 30px;
+  min-width: 0;
+}
+
+.venue-heading > div {
+  max-width: 100%;
+  min-width: 0;
 }
 
 .venue-heading h2 {
@@ -554,33 +596,42 @@ h3 {
 
 .venue-address {
   color: var(--navy);
-  flex: 0 0 auto;
+  flex: 0 1 38%;
   font-size: 14px;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
   padding-bottom: 5px;
   text-align: right;
 }
 
 .venue-address p {
   margin-bottom: 5px;
+  overflow-wrap: anywhere;
 }
 
 .venue-address span {
   color: var(--navy-soft);
   font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 .venue-map-frame {
   aspect-ratio: 16 / 9;
   background: #e9edf0;
   border: 1px solid var(--line);
+  box-sizing: border-box;
   min-height: 320px;
   overflow: hidden;
+  width: 100%;
 }
 
 .venue-map-frame iframe {
   border: 0;
   display: block;
   height: 100%;
+  max-width: 100%;
+  min-width: 0;
   width: 100%;
 }
 
@@ -902,7 +953,7 @@ h3 {
     padding-bottom: 72px;
   }
 
-  .hero-section.hero-section--intro {
+  .hero-section.hero-section--cover {
     min-height: 100svh;
     padding: 64px 24px 88px;
   }
@@ -984,6 +1035,7 @@ h3 {
   }
 
   .venue-address {
+    flex: 0 1 auto;
     text-align: left;
   }
 
