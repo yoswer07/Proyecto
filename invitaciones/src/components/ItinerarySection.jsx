@@ -12,12 +12,12 @@ function ItinerarySection() {
           <h2>Un día, muchos momentos</h2>
           <div className="timeline">
             <div className="timeline-item">
-              <span className="timeline-time">[Hora]</span>
-              <div><h3>Ceremonia</h3><p>[Lugar de la ceremonia]</p></div>
+              <span className="timeline-time">3:30 PM</span>
+              <div><h3>Ceremonia</h3><p>Parroquia Nuestra Señora de Lourdes</p></div>
             </div>
             <div className="timeline-item">
-              <span className="timeline-time">[Hora]</span>
-              <div><h3>Celebración</h3><p>[Lugar de la celebración]</p></div>
+              <span className="timeline-time">5:00 PM</span>
+              <div><h3>Celebración</h3><p>Residencia La Familia</p></div>
             </div>
           </div>
         </div>

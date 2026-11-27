@@ -20,7 +20,7 @@ function easeInOutCubic(progress) {
 const weddingDetails = {
   groom: 'Yoswer Avendaño',
   bride: 'Maria Rodriguez',
-  date: '[Fecha de la boda]',
+  date: '26/12/2026',
 }
 
 function App() {
@@ -145,8 +145,8 @@ function App() {
             <RsvpSection />
 
             <footer className="site-footer">
-              <span>[Nombres de la pareja]</span>
-              <span>[Fecha de la boda]</span>
+              <span>{weddingDetails.groom} & {weddingDetails.bride}</span>
+              <span>{weddingDetails.date}</span>
             </footer>
           </>
         )}

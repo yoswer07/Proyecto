@@ -5,13 +5,11 @@ function InvitationSection() {
         <div className="invitation-photo-space" aria-hidden="true" />
         <div className="section-copy invitation-copy">
           <p className="eyebrow">Con mucho cariño</p>
-          <h2>Queremos compartir este día contigo</h2>
+          <h2>Queremos que nos acompañes a vivir este día</h2>
           <p>
-            Nos hace mucha ilusión invitarte a celebrar el comienzo de esta nueva
-            etapa. Guarda la fecha y acompáñanos en un día lleno de buenos
-            recuerdos.
+           El amor se multiplica cuando se comparte. Acompáñanos a celebrar el comienzo de nuestra historia juntos. Nos emociona invitarte a celebrar nuestro matrimonio y hacer de este día un recuerdo inolvidable para todos.
           </p>
-          <p className="placeholder">[Aquí podremos personalizar el mensaje]</p>
+          <p className="placeholder">Se aceptan regalitos $$$</p>
         </div>
       </div>
     </section>

@@ -1,16 +1,20 @@
 @import '@fontsource/dancing-script/400.css';
 
 :root {
-  --navy: #25384f;
-  --navy-soft: #667486;
-  --rose: #a76475;
-  --paper: #f6f5f1;
-  --line: #dedfdd;
-  --body: #4b5662;
+  --primary: #d6e6f2;
+  --secondary: #f6f3ec;
+  --tertiary: #5d7896;
+  --accent: #b9c6be;
+  --navy: var(--tertiary);
+  --navy-soft: var(--tertiary);
+  --rose: var(--accent);
+  --paper: var(--secondary);
+  --line: rgba(93, 120, 150, 0.22);
+  --body: var(--tertiary);
   --serif: 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
   --sans: 'Trebuchet MS', 'Segoe UI', sans-serif;
 
-  background: #fff;
+  background: var(--secondary);
   color: var(--body);
   font-family: var(--sans);
   font-size: 16px;

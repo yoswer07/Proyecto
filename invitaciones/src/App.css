@@ -57,8 +57,8 @@ main {
 .section-marker {
   align-items: center;
   aspect-ratio: 1;
-  background: #101113;
-  color: #fff;
+  background: var(--tertiary);
+  color: var(--secondary);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -68,7 +68,7 @@ main {
 }
 
 .section-marker__number {
-  color: #e6a9b5;
+  color: var(--accent);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0;
@@ -83,7 +83,7 @@ main {
 
 .hero-section {
   background-color: var(--paper);
-  background-image: radial-gradient(rgba(37, 56, 79, 0.08) 0.7px, transparent 0.7px);
+  background-image: radial-gradient(rgba(93, 120, 150, 0.08) 0.7px, transparent 0.7px);
   background-size: 19px 19px;
   grid-template-columns: minmax(0, 700px);
   min-height: min(720px, 84svh);
@@ -137,8 +137,8 @@ main {
 
 .envelope {
   aspect-ratio: 1.58;
-  background: #d3dce2;
-  box-shadow: 0 28px 60px rgba(37, 56, 79, 0.15);
+  background: color-mix(in srgb, var(--primary) 82%, var(--tertiary));
+  box-shadow: 0 28px 60px rgba(93, 120, 150, 0.15);
   isolation: isolate;
   overflow: hidden;
   perspective: 1000px;
@@ -149,7 +149,7 @@ main {
 
 .envelope-flap {
   backface-visibility: hidden;
-  background: #c4d0d8;
+  background: var(--primary);
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   inset: 0 0 auto;
   height: 48%;
@@ -167,8 +167,8 @@ main {
 
 .envelope-paper {
   align-items: center;
-  background: #fffefa;
-  border: 1px solid rgba(37, 56, 79, 0.12);
+  background: var(--secondary);
+  border: 1px solid rgba(93, 120, 150, 0.12);
   display: flex;
   flex-direction: column;
   inset: 34% 12% 8%;
@@ -187,7 +187,7 @@ main {
 }
 
 .envelope-paper::before {
-  border: 1px solid rgba(167, 100, 117, 0.32);
+  border: 1px solid rgba(185, 198, 190, 0.72);
   content: '';
   inset: 10px;
   pointer-events: none;
@@ -212,6 +212,7 @@ main {
   overflow-wrap: anywhere;
   position: relative;
   z-index: 1;
+  flex-direction: column;
 }
 
 .couple-names > span {
@@ -269,11 +270,11 @@ main {
 .envelope-seal {
   align-items: center;
   appearance: none;
-  background: var(--rose);
-  border: 3px solid #fff3f1;
+  background: var(--accent);
+  border: 3px solid var(--secondary);
   border-radius: 50%;
-  box-shadow: 0 3px 8px rgba(37, 56, 79, 0.2);
-  color: #fff;
+  box-shadow: 0 3px 8px rgba(93, 120, 150, 0.2);
+  color: var(--tertiary);
   display: flex;
   height: 38px;
   justify-content: center;
@@ -292,7 +293,7 @@ main {
 }
 
 .envelope-seal:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--secondary);
   outline-offset: 4px;
 }
 
@@ -303,7 +304,7 @@ main {
 }
 
 .envelope-seal::after {
-  background: #fff3f1;
+  background: var(--secondary);
   content: '';
   height: 6px;
   transform: rotate(45deg);
@@ -316,8 +317,8 @@ main {
 }
 
 .eyebrow {
-  color: var(--rose);
-  font-size: 11px;
+  color: var(--navy);
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0;
   margin: 0 0 20px;
@@ -450,7 +451,7 @@ h3 {
 }
 
 .page-section.invitation-section {
-  background: #fff;
+  background: var(--secondary);
   display: block;
   min-height: 0;
   padding: 0;
@@ -464,7 +465,7 @@ h3 {
 
 .invitation-photo-space {
   --invitation-photo: none;
-  background-color: #e4e8e9;
+  background-color: var(--primary);
   min-height: 520px;
   overflow: hidden;
   position: relative;
@@ -521,7 +522,7 @@ h3 {
 }
 
 .itinerary-photo::after {
-  background: linear-gradient(90deg, rgba(37, 56, 79, 0.18) 0%, rgba(37, 56, 79, 0.08) 55%, var(--paper) 100%);
+  background: linear-gradient(90deg, rgba(93, 120, 150, 0.18) 0%, rgba(93, 120, 150, 0.08) 55%, var(--paper) 100%);
   content: '';
   inset: 0;
   position: absolute;
@@ -549,7 +550,7 @@ h3 {
 }
 
 .timeline-time {
-  color: var(--rose);
+  color: var(--navy);
   font-size: 13px;
   font-weight: 700;
   padding-top: 5px;
@@ -618,7 +619,7 @@ h3 {
 
 .venue-map-frame {
   aspect-ratio: 16 / 9;
-  background: #e9edf0;
+  background: var(--primary);
   border: 1px solid var(--line);
   box-sizing: border-box;
   min-height: 320px;
@@ -650,7 +651,7 @@ h3 {
 }
 
 .page-section.rsvp-section {
-  background: #fff;
+  background: var(--secondary);
   display: block;
   min-height: 0;
   padding: clamp(64px, 9vw, 112px) 40px;
@@ -701,8 +702,8 @@ h3 {
 }
 
 .rsvp-field input {
-  background: #fff;
-  border: 1px solid #b9c1c8;
+  background: var(--secondary);
+  border: 1px solid rgba(93, 120, 150, 0.34);
   border-radius: 2px;
   box-sizing: border-box;
   color: var(--navy);
@@ -714,7 +715,7 @@ h3 {
 
 .rsvp-field input:focus-visible {
   border-color: var(--navy);
-  outline: 2px solid rgba(37, 56, 79, 0.2);
+  outline: 2px solid rgba(93, 120, 150, 0.2);
   outline-offset: 2px;
 }
 
@@ -758,7 +759,7 @@ h3 {
 .rsvp-submit {
   background: var(--navy);
   border: 1px solid var(--navy);
-  color: #fff;
+  color: var(--secondary);
   cursor: pointer;
   font: inherit;
   font-size: 14px;
@@ -768,7 +769,7 @@ h3 {
 }
 
 .rsvp-submit:hover {
-  background: #1b2b40;
+  background: color-mix(in srgb, var(--tertiary) 86%, #000);
 }
 
 .rsvp-submit:disabled {
@@ -840,11 +841,11 @@ h3 {
 
 .music-control {
   align-items: center;
-  background: rgba(246, 245, 241, 0.94);
-  border: 1px solid rgba(37, 56, 79, 0.28);
+  background: rgba(246, 243, 236, 0.94);
+  border: 1px solid rgba(93, 120, 150, 0.28);
   border-radius: 50%;
   bottom: max(18px, env(safe-area-inset-bottom));
-  box-shadow: 0 3px 12px rgba(37, 56, 79, 0.14);
+  box-shadow: 0 3px 12px rgba(93, 120, 150, 0.14);
   color: var(--navy);
   cursor: pointer;
   display: flex;
@@ -859,7 +860,7 @@ h3 {
 }
 
 .music-control:hover {
-  background: #fff;
+  background: var(--secondary);
   color: var(--rose);
   transform: translateY(-2px);
 }
@@ -927,7 +928,7 @@ h3 {
   }
 
   .itinerary-photo::after {
-    background: linear-gradient(180deg, rgba(37, 56, 79, 0.12) 0%, rgba(246, 245, 241, 0.3) 55%, var(--paper) 100%);
+    background: linear-gradient(180deg, rgba(93, 120, 150, 0.12) 0%, rgba(246, 243, 236, 0.3) 55%, var(--paper) 100%);
   }
 
   .itinerary-content {
