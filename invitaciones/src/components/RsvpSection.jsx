@@ -1,24 +1,65 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { isSupabaseConfigured, supabase } from '../lib/supabase.js'
 
-const MAX_COMPANIONS = 1
-const MAX_CHILDREN = 12
+function formatDeadline(value) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'la fecha indicada en tu invitación'
+
+  return new Intl.DateTimeFormat('es-VE', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  }).format(date)
+}
 
 function RsvpSection() {
-  const [form, setForm] = useState({
-    guestName: '',
-    email: '',
-    phone: '',
-    companionCount: 0,
-    childCount: 0,
-    companions: [],
-    children: [],
-    consent: false,
+  const token = new URLSearchParams(window.location.search).get('t')?.trim() ?? ''
+  const [viewState, setViewState] = useState(() => {
+    if (!token) return 'invalid'
+    return isSupabaseConfigured && supabase ? 'loading' : 'unavailable'
   })
+  const [invitation, setInvitation] = useState(null)
+  const [form, setForm] = useState({ email: '', phone: '', status: '', consent: false })
   const [feedback, setFeedback] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [ticket, setTicket] = useState(null)
+  const [photoUploadUrl, setPhotoUploadUrl] = useState('')
+
+  useEffect(() => {
+    if (!token || !supabase) return undefined
+
+    let isCurrent = true
+
+    async function loadInvitation() {
+      try {
+        const { data, error } = await supabase.functions.invoke('rsvp-invitacion', {
+          body: { action: 'lookup', token },
+        })
+
+        if (!isCurrent) return
+        if (error || !data?.invitation) {
+          setViewState('invalid')
+          return
+        }
+
+        const currentInvitation = data.invitation
+        setInvitation(currentInvitation)
+        setForm({
+          email: currentInvitation.email ?? '',
+          phone: currentInvitation.telefono ?? '',
+          status: currentInvitation.estado_rsvp === 'pendiente' ? '' : currentInvitation.estado_rsvp,
+          consent: false,
+        })
+        setViewState(currentInvitation.isClosed ? 'closed' : 'ready')
+      } catch {
+        if (isCurrent) setViewState('unavailable')
+      }
+    }
+
+    void loadInvitation()
+    return () => {
+      isCurrent = false
+    }
+  }, [token])
 
   function updateField(event) {
     const { name, type, value, checked } = event.target
@@ -28,61 +69,51 @@ function RsvpSection() {
     }))
   }
 
-  function updateCount(countField, namesField, value, maxCount) {
-    const parsedCount = Number.parseInt(value, 10)
-    const count = Number.isNaN(parsedCount)
-      ? 0
-      : Math.min(Math.max(parsedCount, 0), maxCount)
-
-    setForm((current) => ({
-      ...current,
-      [countField]: count,
-      [namesField]: Array.from(
-        { length: count },
-        (_, index) => current[namesField][index] ?? '',
-      ),
-    }))
-  }
-
-  function updateGuestName(namesField, index, value) {
-    setForm((current) => {
-      const names = [...current[namesField]]
-      names[index] = value
-      return { ...current, [namesField]: names }
-    })
-  }
-
   async function handleSubmit(event) {
     event.preventDefault()
     setFeedback('')
 
-    if (!isSupabaseConfigured || !supabase) {
-      setFeedback('La conexión con Supabase todavía no está configurada.')
+    if (!form.status) {
+      setFeedback('Selecciona si asistirás o no podrás asistir.')
+      return
+    }
+
+    if (!form.consent) {
+      setFeedback('Autoriza el uso de tus datos de contacto para registrar la respuesta.')
       return
     }
 
     setIsSubmitting(true)
     try {
-      const { data, error } = await supabase.functions.invoke('create-rsvp', {
+      const { data, error } = await supabase.functions.invoke('rsvp-invitacion', {
         body: {
-          guestName: form.guestName,
+          action: 'save',
+          token,
           email: form.email,
-          phone: form.phone,
-          companionName: form.companions[0] ?? null,
-          childrenNames: form.children,
+          telefono: form.phone,
+          estado_rsvp: form.status,
           consent: form.consent,
         },
       })
 
-      if (error || !data?.photoUploadUrl) {
-        setFeedback('No se pudo guardar la confirmación. Inténtalo más tarde.')
+      if (error?.context?.status === 409) {
+        setViewState('closed')
+        setFeedback('El plazo para confirmar asistencia ya terminó.')
         return
       }
 
-      setTicket({ guestName: data.guestName, photoUploadUrl: data.photoUploadUrl })
-      setFeedback(data.organizerCopySent === false
-        ? 'Confirmación guardada y correo enviado; no se pudo enviar la copia al organizador.'
-        : 'Confirmación guardada. El QR compartido también fue enviado por correo.')
+      if (error || !data?.invitation) {
+        setFeedback(data?.error ?? 'No se pudo guardar la respuesta. Inténtalo de nuevo.')
+        return
+      }
+
+      setInvitation(data.invitation)
+      setPhotoUploadUrl(data.photoUploadUrl ?? '')
+      setFeedback(data.emailSent
+        ? data.organizerCopySent === false
+          ? 'Respuesta guardada y correo enviado; no se pudo enviar la copia al organizador.'
+          : 'Respuesta guardada. Enviamos la confirmación a tu correo.'
+        : 'Respuesta guardada, pero no se pudo enviar el correo de confirmación.')
     } catch {
       setFeedback('No se pudo conectar con Supabase. Revisa tu conexión e inténtalo de nuevo.')
     } finally {
@@ -90,150 +121,147 @@ function RsvpSection() {
     }
   }
 
+  const isClosed = viewState === 'closed' || Boolean(invitation?.isClosed)
+
   return (
     <section className="page-section rsvp-section" id="confirmacion">
       <div className="rsvp-content">
         <p className="eyebrow">Esperamos verte</p>
-        <h2>¿Nos acompañas?</h2>
-        <p className="rsvp-intro">Completa tus datos y los nombres de las personas que asistirán contigo.</p>
 
-        <form className="rsvp-form" onSubmit={handleSubmit}>
-          <div className="rsvp-fields">
-            <label className="rsvp-field rsvp-field--wide" htmlFor="guest-name">
-              <span>Nombre del invitado principal</span>
-              <input
-                autoComplete="name"
-                id="guest-name"
-                name="guestName"
-                onChange={updateField}
-                disabled={isSubmitting || Boolean(ticket)}
-                required
-                value={form.guestName}
-              />
-            </label>
-            <label className="rsvp-field" htmlFor="guest-email">
-              <span>Correo electrónico</span>
-              <input
-                autoComplete="email"
-                id="guest-email"
-                name="email"
-                onChange={updateField}
-                disabled={isSubmitting || Boolean(ticket)}
-                required
-                type="email"
-                value={form.email}
-              />
-            </label>
-            <label className="rsvp-field" htmlFor="guest-phone">
-              <span>WhatsApp con código de país</span>
-              <input
-                autoComplete="tel"
-                id="guest-phone"
-                name="phone"
-                onChange={updateField}
-                disabled={isSubmitting || Boolean(ticket)}
-                placeholder="+58 412 123 4567"
-                required
-                type="tel"
-                value={form.phone}
-              />
-            </label>
+        {viewState === 'loading' && <p role="status">Buscando tu invitación…</p>}
+
+        {viewState === 'unavailable' && (
+          <div className="rsvp-state-message" role="alert">
+            <h2>No pudimos cargar la invitación</h2>
+            <p>Revisa tu conexión e inténtalo de nuevo.</p>
           </div>
+        )}
 
-          <fieldset className="rsvp-counts">
-            <legend>Personas que asistirán contigo</legend>
-            <label className="rsvp-field" htmlFor="companion-count">
-              <span>Acompañantes adultos</span>
-              <input
-                id="companion-count"
-                disabled={isSubmitting || Boolean(ticket)}
-                max={MAX_COMPANIONS}
-                min="0"
-                onChange={(event) => updateCount('companionCount', 'companions', event.target.value, MAX_COMPANIONS)}
-                step="1"
-                type="number"
-                value={form.companionCount}
-              />
-            </label>
-            <label className="rsvp-field" htmlFor="child-count">
-              <span>Hijos</span>
-              <input
-                id="child-count"
-                disabled={isSubmitting || Boolean(ticket)}
-                max={MAX_CHILDREN}
-                min="0"
-                onChange={(event) => updateCount('childCount', 'children', event.target.value, MAX_CHILDREN)}
-                step="1"
-                type="number"
-                value={form.childCount}
-              />
-            </label>
-          </fieldset>
-
-          {form.companions.length > 0 && (
-            <fieldset className="rsvp-guest-list">
-              <legend>Nombres de acompañantes</legend>
-              {form.companions.map((name, index) => (
-                <label className="rsvp-field" htmlFor={`companion-${index}`} key={`companion-${index}`}>
-                  <span>Acompañante {index + 1}</span>
-                  <input
-                    id={`companion-${index}`}
-                    onChange={(event) => updateGuestName('companions', index, event.target.value)}
-                    disabled={isSubmitting || Boolean(ticket)}
-                    required
-                    value={name}
-                  />
-                </label>
-              ))}
-            </fieldset>
-          )}
-
-          {form.children.length > 0 && (
-            <fieldset className="rsvp-guest-list">
-              <legend>Nombres de los hijos</legend>
-              {form.children.map((name, index) => (
-                <label className="rsvp-field" htmlFor={`child-${index}`} key={`child-${index}`}>
-                  <span>Hijo {index + 1}</span>
-                  <input
-                    id={`child-${index}`}
-                    onChange={(event) => updateGuestName('children', index, event.target.value)}
-                    disabled={isSubmitting || Boolean(ticket)}
-                    required
-                    value={name}
-                  />
-                </label>
-              ))}
-            </fieldset>
-          )}
-
-          <label className="rsvp-consent">
-            <input
-              checked={form.consent}
-              disabled={isSubmitting || Boolean(ticket)}
-              name="consent"
-              onChange={updateField}
-              required
-              type="checkbox"
-            />
-            <span>Autorizo el uso de estos datos para gestionar la asistencia y el acceso a la invitación.</span>
-          </label>
-
-          <button className="rsvp-submit" disabled={isSubmitting || Boolean(ticket)} type="submit">
-            {isSubmitting ? 'Guardando…' : ticket ? 'Confirmación registrada' : 'Confirmar y crear QR'}
-          </button>
-          <p aria-live="polite" className="rsvp-feedback" role="status">{feedback}</p>
-        </form>
-
-        {ticket && (
-          <div className="rsvp-ticket" aria-live="polite">
-            <p className="eyebrow">Acceso compartido para fotos</p>
-            <h3>{ticket.guestName}</h3>
-            <QRCodeSVG value={ticket.photoUploadUrl} size={208} level="M" includeMargin />
-            <p>Este QR y enlace son iguales para todas las personas invitadas.</p>
-            <a className="rsvp-upload-link" href={ticket.photoUploadUrl} rel="noreferrer" target="_blank">
-              Abrir formulario para subir fotos ↗
-            </a>
+        {viewState === 'invalid' && (
+          <div className="rsvp-state-message" role="alert">
+            <h2>Este enlace de invitación no es válido</h2>
+            <p>Contacta a los novios para que te compartan tu enlace personal.</p>
           </div>
+        )}
+
+        {invitation && (
+          <>
+            <h2>
+              {isClosed
+                ? `Hola, ${invitation.nombre_mostrar}. El plazo para confirmar terminó.`
+                : `¡Hola, ${invitation.nombre_mostrar}! Confirma tu asistencia`}
+            </h2>
+            <p className="rsvp-intro">
+              Las confirmaciones se reciben hasta el {formatDeadline(invitation.fecha_limite_rsvp)}.
+            </p>
+
+            {invitation.acompanantes.length > 0 ? (
+              <div className="rsvp-companions">
+                <h3>Acompañantes asignados</h3>
+                <ul>
+                  {invitation.acompanantes.map((name, index) => <li key={`${name}-${index}`}>{name}</li>)}
+                </ul>
+                <p>Si hay algún inconveniente con los acompañantes aquí listados, contáctame.</p>
+              </div>
+            ) : (
+              <p className="rsvp-companions-note">Esta invitación no tiene acompañantes asignados.</p>
+            )}
+
+            {isClosed && (
+              <p className="rsvp-feedback" role="status">
+                Ya no aceptamos confirmaciones para esta invitación.
+              </p>
+            )}
+
+            {!isClosed && viewState === 'ready' && (
+              <form className="rsvp-form" onSubmit={handleSubmit}>
+                <div className="rsvp-fields">
+                  <label className="rsvp-field" htmlFor="guest-email">
+                    <span>Correo electrónico</span>
+                    <input
+                      autoComplete="email"
+                      disabled={isSubmitting}
+                      id="guest-email"
+                      name="email"
+                      onChange={updateField}
+                      required
+                      type="email"
+                      value={form.email}
+                    />
+                  </label>
+                  <label className="rsvp-field" htmlFor="guest-phone">
+                    <span>Teléfono con código de país</span>
+                    <input
+                      autoComplete="tel"
+                      disabled={isSubmitting}
+                      id="guest-phone"
+                      name="phone"
+                      onChange={updateField}
+                      placeholder="+58 412 123 4567"
+                      required
+                      type="tel"
+                      value={form.phone}
+                    />
+                  </label>
+                </div>
+
+                <fieldset className="rsvp-status-options">
+                  <legend>Tu respuesta</legend>
+                  <label>
+                    <input
+                      checked={form.status === 'confirmado'}
+                      disabled={isSubmitting}
+                      name="status"
+                      onChange={updateField}
+                      required
+                      type="radio"
+                      value="confirmado"
+                    />
+                    <span>Sí, asistiré</span>
+                  </label>
+                  <label>
+                    <input
+                      checked={form.status === 'no_asiste'}
+                      disabled={isSubmitting}
+                      name="status"
+                      onChange={updateField}
+                      required
+                      type="radio"
+                      value="no_asiste"
+                    />
+                    <span>No podré asistir</span>
+                  </label>
+                </fieldset>
+
+                <label className="rsvp-consent">
+                  <input
+                    checked={form.consent}
+                    disabled={isSubmitting}
+                    name="consent"
+                    onChange={updateField}
+                    type="checkbox"
+                  />
+                  <span>Autorizo el uso de mi correo y teléfono para gestionar mi respuesta y enviarme la confirmación.</span>
+                </label>
+
+                <button className="rsvp-submit" disabled={isSubmitting} type="submit">
+                  {isSubmitting ? 'Guardando…' : invitation.estado_rsvp === 'pendiente' ? 'Confirmar respuesta' : 'Actualizar respuesta'}
+                </button>
+                <p aria-live="polite" className="rsvp-feedback" role="status">{feedback}</p>
+              </form>
+            )}
+
+            {photoUploadUrl && (
+              <div className="rsvp-ticket" aria-live="polite">
+                <p className="eyebrow">Acceso compartido para fotos</p>
+                <QRCodeSVG value={photoUploadUrl} size={208} level="M" includeMargin />
+                <p>El mismo QR y enlace están disponibles para todas las personas invitadas.</p>
+                <a className="rsvp-upload-link" href={photoUploadUrl} rel="noreferrer" target="_blank">
+                  Abrir formulario para subir fotos ↗
+                </a>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

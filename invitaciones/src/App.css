@@ -672,6 +672,46 @@ h3 {
   max-width: 600px;
 }
 
+.rsvp-state-message,
+.rsvp-companions {
+  background: color-mix(in srgb, var(--primary) 36%, var(--secondary));
+  border-left: 3px solid var(--accent);
+  box-sizing: border-box;
+  margin: 24px 0;
+  max-width: 620px;
+  padding: 20px 24px;
+}
+
+.rsvp-state-message h2,
+.rsvp-companions h3 {
+  margin: 0 0 10px;
+}
+
+.rsvp-state-message p,
+.rsvp-companions p {
+  color: var(--body);
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.rsvp-companions h3 {
+  color: var(--navy);
+  font-size: 20px;
+}
+
+.rsvp-companions ul {
+  color: var(--navy);
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+
+.rsvp-companions-note {
+  color: var(--navy-soft);
+  font-size: 14px;
+  margin: 20px 0;
+}
+
 .rsvp-form {
   display: grid;
   gap: 28px;
@@ -725,6 +765,39 @@ h3 {
   border-top: 1px solid var(--line);
   margin: 0;
   padding: 20px 0 0;
+}
+
+.rsvp-status-options {
+  border: 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  margin: 0;
+  padding: 20px 0 0;
+}
+
+.rsvp-status-options legend {
+  color: var(--navy);
+  font-family: var(--serif);
+  font-size: 21px;
+  padding: 0 0 16px;
+  width: 100%;
+}
+
+.rsvp-status-options label {
+  align-items: center;
+  color: var(--navy);
+  display: flex;
+  font-size: 14px;
+  gap: 9px;
+}
+
+.rsvp-status-options input {
+  accent-color: var(--navy);
+  height: 17px;
+  margin: 0;
+  width: 17px;
 }
 
 .rsvp-counts legend,

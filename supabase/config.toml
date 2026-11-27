@@ -1,2 +1,5 @@
 [functions.create-rsvp]
 verify_jwt = false
+
+[functions.rsvp-invitacion]
+verify_jwt = false
