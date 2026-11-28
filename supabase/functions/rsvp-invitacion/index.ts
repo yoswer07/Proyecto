@@ -119,21 +119,28 @@ async function sendEmailJsTemplate({ to, templateParams }) {
 
 function makeTemplateParams(invitation, email, phone, photoUploadUrl) {
   const companions = invitation.acompanantes ?? []
-  const statusMessage = invitation.estado_rsvp === 'confirmado'
+  const isConfirmed = invitation.estado_rsvp === 'confirmado'
+
+  const statusMessage = isConfirmed
     ? '¡Gracias por confirmar! Tu asistencia quedó registrada y nos alegra mucho que nos acompañes.'
     : 'Gracias por avisarnos. Actualizamos tu invitación y lamentamos que no puedas acompañarnos.'
+
+  const companionNote = companions.length > 0
+    ? 'Si hay algún inconveniente con los acompañantes aquí listados, contáctame.'
+    : ''
 
   return {
     name: invitation.nombre_mostrar,
     guest_name: invitation.nombre_mostrar,
-    message: `${statusMessage} Si hay algún inconveniente con los acompañantes aquí listados, contáctame.`,
-    qr_code_url: buildQrImageUrl(photoUploadUrl),
-    invite_url: photoUploadUrl,
-    qr_token: 'QR compartido para subir fotos',
+    message: `${statusMessage} ${companionNote}`.trim(),
+    qr_code_url: isConfirmed ? buildQrImageUrl(photoUploadUrl) : '',
+    invite_url: isConfirmed ? photoUploadUrl : '',
+    qr_token: isConfirmed
+      ? 'Puedes compartir tus recuerdos del evento escaneando el siguiente QR o ingresando al enlace'
+      : '',
     guest_email: email,
     guest_phone: phone,
     companion_name: companions.length > 0 ? companions.join(', ') : 'Sin acompañantes asignados',
-    children_names: 'No aplica',
   }
 }
 

@@ -135,6 +135,48 @@ main {
   transform: translateX(-50%);
 }
 
+.envelope-seal-logo {
+  --logo-pos-x: 50%; /* 0% = izquierda, 50% = centro, 100% = derecha */
+  --logo-pos-y: 22%; /* 0% = arriba,   50% = centro, 100% = abajo */
+  border: 3px solid color-mix(in srgb, var(--secondary) 78%, var(--primary));
+  border-radius: 50%;
+  box-shadow:
+    0 2px 4px rgba(25, 38, 54, 0.22),
+    0 8px 18px rgba(93, 120, 150, 0.2),
+    inset 0 0 0 1px rgba(93, 120, 150, 0.28),
+    inset 0 2px 4px rgba(255, 255, 255, 0.45);
+  filter: contrast(1.03) saturate(0.88);
+  height: clamp(72px, 13vw, 118px);
+  left: 50%;
+  object-fit: cover;
+  object-position: var(--logo-pos-x) var(--logo-pos-y);
+  pointer-events: none;
+  position: absolute;
+  top: 72%;
+  transform: translate(-50%, -50%) rotate(-4deg);
+  transition: opacity 300ms ease, transform 400ms ease;
+  width: clamp(72px, 13vw, 118px);
+  z-index: 3;
+}
+
+.envelope-seal-logo {
+  outline: 2px dashed rgba(93, 120, 150, 0.35);
+  outline-offset: -6px;
+}
+
+.envelope--opening .envelope-seal-logo {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.85);
+}
+
+@media (max-width: 700px) {
+  .envelope-seal-logo {
+    height: clamp(42px, 12vw, 60px);
+    top: 79%;
+    width: clamp(42px, 12vw, 60px);
+  }
+}
+
 .envelope {
   aspect-ratio: 1.58;
   background: color-mix(in srgb, var(--primary) 82%, var(--tertiary));
@@ -464,19 +506,10 @@ h3 {
 }
 
 .invitation-photo-space {
-  --invitation-photo: none;
   background-color: var(--primary);
   min-height: 520px;
   overflow: hidden;
   position: relative;
-}
-
-.invitation-photo-space::before {
-  background: var(--invitation-photo) center / cover no-repeat;
-  content: '';
-  filter: blur(10px);
-  inset: -14px;
-  position: absolute;
 }
 
 .invitation-copy {
@@ -521,8 +554,30 @@ h3 {
   width: 100%;
 }
 
+.invitation-photo-space img {
+  filter: saturate(0.7);
+  height: 100%;
+  object-fit: cover;
+  object-position: 24% center;
+  width: 100%;
+}
+
 .itinerary-photo::after {
   background: linear-gradient(90deg, rgba(93, 120, 150, 0.18) 0%, rgba(93, 120, 150, 0.08) 55%, var(--paper) 100%);
+  content: '';
+  inset: 0;
+  position: absolute;
+}
+
+.invitation-photo-space::after {
+  backdrop-filter: blur(5px);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(214, 230, 242, 0.35) 0%,
+      rgba(214, 230, 242, 0.2) 55%,
+      var(--paper) 100%
+    );
   content: '';
   inset: 0;
   position: absolute;
@@ -1034,7 +1089,7 @@ h3 {
 
   .hero-content {
     padding: 12px 0;
-    width: calc(100% - 80px);
+    width: calc(100% - 48px);
   }
 
   .hero-bouquet {
@@ -1042,12 +1097,12 @@ h3 {
   }
 
   .envelope-paper {
-    inset: 34% 7% 8%;
-    padding: 8px 8px 12px;
+    inset: 20% 7% 8%; /* Antes 34%: da más altura al rectángulo blanco */
+    padding: 10px 10px;
   }
 
   .envelope-paper::before {
-    inset: 7px;
+    inset: 6px;
   }
 
   .couple-names {

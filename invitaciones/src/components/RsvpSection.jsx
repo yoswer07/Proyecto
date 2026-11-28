@@ -22,6 +22,7 @@ function RsvpSection() {
   const [form, setForm] = useState({ email: '', phone: '', status: '', consent: false })
   const [feedback, setFeedback] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const [photoUploadUrl, setPhotoUploadUrl] = useState('')
 
   useEffect(() => {
@@ -71,6 +72,8 @@ function RsvpSection() {
 
   async function handleSubmit(event) {
     event.preventDefault()
+
+    if (isSubmitting || isSubmitted) return
     setFeedback('')
 
     if (!form.status) {
@@ -114,6 +117,7 @@ function RsvpSection() {
           ? 'Respuesta guardada y correo enviado; no se pudo enviar la copia al organizador.'
           : 'Respuesta guardada. Enviamos la confirmación a tu correo.'
         : 'Respuesta guardada, pero no se pudo enviar el correo de confirmación.')
+        setIsSubmitted(true)
     } catch {
       setFeedback('No se pudo conectar con Supabase. Revisa tu conexión e inténtalo de nuevo.')
     } finally {
@@ -173,7 +177,7 @@ function RsvpSection() {
               </p>
             )}
 
-            {!isClosed && viewState === 'ready' && (
+            {!isClosed && viewState === 'ready' && !isSubmitted && (
               <form className="rsvp-form" onSubmit={handleSubmit}>
                 <div className="rsvp-fields">
                   <label className="rsvp-field" htmlFor="guest-email">
@@ -251,13 +255,19 @@ function RsvpSection() {
               </form>
             )}
 
-            {photoUploadUrl && (
+            {!isClosed && viewState === 'ready' && isSubmitted && (
+              <div className="rsvp-submitted-state">
+                <p aria-live="polite" className="rsvp-feedback" role="status">{feedback}</p>
+              </div> 
+            )}
+
+            {invitation.estado_rsvp === 'confirmado' && photoUploadUrl && (
               <div className="rsvp-ticket" aria-live="polite">
-                <p className="eyebrow">Acceso compartido para fotos</p>
+                <p className="eyebrow">Puedes compartir tus recuerdos en el siguiente QR o enlace.</p>
                 <QRCodeSVG value={photoUploadUrl} size={208} level="M" includeMargin />
                 <p>El mismo QR y enlace están disponibles para todas las personas invitadas.</p>
                 <a className="rsvp-upload-link" href={photoUploadUrl} rel="noreferrer" target="_blank">
-                  Abrir formulario para subir fotos ↗
+                  Comparte tus recuerdos ↗
                 </a>
               </div>
             )}

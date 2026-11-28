@@ -1,4 +1,4 @@
-export const MUSIC_VOLUME = 0.25
+export const MUSIC_VOLUME = 0.5
 
 function MusicControl({ audioRef, isPlaying }) {
   function togglePlayback() {

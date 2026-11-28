@@ -1,3 +1,5 @@
+import logoImg from '../assets/logo.jpeg'
+
 function Envelope({ groom, bride, date, isFontReady, isOpening, isOpenDisabled, onOpen }) {
   return (
     <div className={`envelope${isOpening ? ' envelope--opening' : ''}`}>
@@ -11,6 +13,12 @@ function Envelope({ groom, bride, date, isFontReady, isOpening, isOpenDisabled, 
         <p className="hero-date">{date}</p>
       </div>
       <div className="envelope-flap" aria-hidden="true" />
+      <img
+        alt=""
+        aria-hidden="true"
+        className="envelope-seal-logo"
+        src={logoImg}
+      />
       <button
         aria-label="Abrir la invitación desde el sello"
         className="envelope-seal"
